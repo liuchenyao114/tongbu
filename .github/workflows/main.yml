@@ -48,13 +48,11 @@ jobs:
 
           rclone mkdir 1:$(date +%Y)/$(date +%m)/$(date +%d)
 
-          
 
-          rclone move 1:临时 1:$(date +%Y)/$(date +%m)/$(date +%d) -P
+          rclone move 1:临时 1:$(date +%Y)/$(date +%m)/$(date +%d)
 
-          
 
-          rclone copy 1:$(date +%Y)/$(date +%m)/$(date +%d) 3:$(date +%Y)/$(date +%m)/$(date +%d) -P --ignore-errors
+          rclone copy 1:$(date +%Y)/$(date +%m)/$(date +%d) 3:$(date +%Y)/$(date +%m)/$(date +%d) --ignore-errors
 
       - name: Zip config #打包配置文件
 
