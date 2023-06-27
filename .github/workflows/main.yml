@@ -1,0 +1,94 @@
+name: shujutongbu
+
+on:
+
+  workflow_dispatch:
+
+  schedule:
+
+    - cron: 0 0 * * *
+
+jobs:
+
+  run-it:
+
+    runs-on: ubuntu-latest
+
+    name: zip
+
+    steps:
+
+      - name: Checkout codes
+
+        uses: actions/checkout@v2
+
+      - name: Install rclone #安装rclone
+
+        run: curl https://rclone.org/install.sh | sudo bash
+
+      - name: Unzip config #解压配置文件
+
+        run: |
+
+         mkdir -p ~/.config/rclone/
+
+         unzip -P ${{ secrets.PASSWD }} rclone.zip -d ~/.config/rclone/
+
+     
+
+      - name: Run rclone #运行rclone
+
+        run: |
+
+          
+
+          # 更改时区
+
+          sudo cp /usr/share/zoneinfo/America/Yakutat /etc/localtime
+
+          
+
+          # 列出文件(此处不展示)
+
+          echo `date +"%Y-%m-%d %H:%M:%S"` begin > time.log
+
+          echo "列出文件(此处不展示)"
+
+          rclone lsf 1:/ > "lsf.log"
+
+          rclone mkdir 1:/E5-Rclone-Actions-Repo/
+
+          rclone move lsf.log 1:/E5-Rclone-Actions-Repo/
+
+          rclone delete 1:/E5-Rclone-Actions-Repo/lsf.log
+
+          rclone move lsf.log 1:/E5-Rclone-Actions-Repo/
+
+          rclone delete 1:/E5-Rclone-Actions-Repo/lsf.log
+
+          rclone rmdir 1:/E5-Rclone-Actions-Repo/
+
+          rclone mkdir 1:$(date +%Y)/$(date +%m)/$(date +%d)
+
+
+          rclone move 1:临时 1:$(date +%Y)/$(date +%m)/$(date +%d) -P
+          
+          rclone copy 1:$(date +%Y)/$(date +%m)/$(date +%d) 3:$(date +%Y)/$(date +%m)/$(date +%d) -P --ignore-errors
+
+      - name: Zip config #打包配置文件
+
+        run: zip -P ${{ secrets.PASSWD }} rclone.zip -j ~/.config/rclone/rclone.conf
+
+      - name: Commit config #提交配置文件
+
+        run: |
+
+         git config --global user.email "liuchenyao114@gmail.com"
+
+         git config --global user.name "liuchenyao114"
+
+         git add .
+
+         git commit -am "new rclone config"
+
+         git push
