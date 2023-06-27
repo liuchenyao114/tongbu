@@ -48,21 +48,7 @@ jobs:
 
           
 
-          # 列出文件(此处不展示)
-
-          echo `date +"%Y-%m-%d %H:%M:%S"` begin > time.log
-
-          echo "列出文件(此处不展示)"
-
-          rclone lsf e5:/ > "lsf.log"
-
-          rclone mkdir e5:/E5-Rclone-Actions-Repo/
-
-          rclone move lsf.log e5:/E5-Rclone-Actions-Repo/
-
-          rclone delete e5:/E5-Rclone-Actions-Repo/lsf.log
-
-          rclone rmdir e5:/E5-Rclone-Actions-Repo/
+          # 复制文件
           
           rclone mkdir 1:$(date +%Y)/$(date +%m)/$(date +%d)
           
