@@ -1,0 +1,53 @@
+name: shujutongbu
+
+on:
+
+  workflow_dispatch:
+
+  schedule:
+
+    - cron: 0 0 * * *
+
+jobs:
+
+  run-it:
+
+    runs-on: ubuntu-latest
+
+    name: zip
+
+    steps:
+
+      - name: Checkout codes
+
+        uses: actions/checkout@v2
+
+      - name: Install rclone #安装rclone
+
+        run: curl https://rclone.org/install.sh | sudo bash
+
+      - name: Unzip config #解压配置文件
+
+        run: |
+
+         mkdir -p ~/.config/rclone/
+
+         unzip -P ${{ secrets.PASSWD }} rclone.zip -d ~/.config/rclone/
+
+     
+
+      - name: Run rclone #运行rclone
+
+        run: |
+
+          
+
+          # 更改时区
+
+          sudo cp /usr/share/zoneinfo/America/Yakutat /etc/localtime
+
+          rclone mkdir 1:$(date +%Y)/$(date +%m)/$(date +%d)
+
+          rclone move 1:临时 1:$(date +%Y)/$(date +%m)/$(date +%d)
+
+          rclone copy 1:$(date +%Y)/$(date +%m)/$(date +%d) 3:$(date +%Y)/$(date +%m)/$(date +%d) --ignore-erro
